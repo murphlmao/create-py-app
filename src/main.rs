@@ -1,50 +1,68 @@
-// libraries
-use clap::Parser;
-
 // modules
-mod commands;
-mod os_detection;
-use crate::os_detection::pyenv_detection;
+
+// lib
+use std::process;
+use clap::Parser;
+use regex::Regex;
+
+// define modules
+mod cli;
+mod presets;
+use presets::{base, common, python};
+use cli::args::{Cli, Language};
 
 
-#[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-struct Args {
-    // name of the application
-    #[arg(short, long)]
-    name: String,
 
-    // python version to install for this app
-    #[arg(short, long, default_value = "latest")]
-    pyver: String,
+#[allow(clippy::needless_return)]
+fn validate_preset(preset: &str) -> Language {
+    if preset == "base" {
+        return Language {
+            language: "base".to_string(),
+            ver: "".to_string(),
+        };
+    }
 
-
+    let re = Regex::new(r"python(3\.\d+|4\.\d+)").unwrap();
+    if let Some(caps) = re.captures(preset) {
+        return Language {
+            language: "python".to_string(),
+            ver: caps[1].to_string(),
+        };
+    } else {
+        eprintln!("Python version not recognized in --preset, invalid input. Expected format: 'python3.xx'");
+        process::exit(1);
+    }
 }
 
 fn main() {
-    let args = Args::parse();
-
-    println!("App name: {:?}", args.name);
-    println!("Python Version: {:?}", args.pyver);
-
-
-    // ask user if they're sure they want to create a python app in this current directory
-    println!("Are you sure you want to create a python app in this directory? (y/n)");
-    let mut input = String::new();
-    std::io::stdin().read_line(&mut input).unwrap();
-    let input = input.trim().to_lowercase();
-
-    if input != "y" {
-        println!("Exiting...");
-        return;
+    match Cli::parse() {
+        Cli::Create(args) => {
+            println!("Creating project with name: {}", args.name);
+            println!("Using preset: {:?} ", args.preset);
+            let lang = validate_preset(&args.preset);
+            let create = true;
+            if lang.language == "python" {
+                let prefix = common(&args.name, create, &lang);
+                python(&args.name, &prefix, &lang);
+            } else if lang.language == "base" {
+                let _prefix = base(&args.name, create, &lang);
+            } else {
+                eprintln!("Preset: {:?} not supported", args.preset);
+            }
+        }
+        Cli::Update(args) => {
+            println!("Updating project with name: {}", args.name);
+            println!("Using preset: {:?} ", args.preset);
+            let lang = validate_preset(&args.preset);
+            let create = false;
+            if lang.language == "python" {
+                let prefix = common(&args.name, create, &lang);
+                python(&args.name, &prefix, &lang);
+            } else if lang.language == "base" {
+                let _prefix = base(&args.name, create, &lang);
+            } else {
+                eprintln!("Preset: {:?} not supported", args.preset);
+            }
+        }
     }
-
-    // init module creation
-    let os: String = commands::init();
-    let pyenv_status = pyenv_detection::install_pyenv(os);
-    //println!("pyenv status: {}", pyenv_status);
-
-
-    // create python app
-    commands::create_app(args.name, args.pyver);
 }
