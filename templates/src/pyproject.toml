@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 #version = "1.0.0"
 #description = ""
 #authors = [{name = "", email = ""}]
-#requires-python = ">={{ python-version }}"
+#requires-python = ">={{ python_version }}"
 #classifiers = [
 #    "Programming Language :: Python :: 3",
 #    "Operating System :: OS Independent",

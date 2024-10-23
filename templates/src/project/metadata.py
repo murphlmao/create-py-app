@@ -4,7 +4,7 @@ __description__ = ""
 __version__ = "1.0.0"
 __author__ = ""
 __author_email__ = ""
-__python_requires__ = ">={{ python-version }}"
+__python_requires__ = ">={{ python_version }}"
 __classifiers__ = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
