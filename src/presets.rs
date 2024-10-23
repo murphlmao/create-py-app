@@ -1,10 +1,10 @@
 // libraries
 use std::{fs::{self, File}, io::Write};
 use askama::Template;
-
-
-// modules/crates
 extern crate regex;
+
+
+// modules
 
 
 trait CPATemplate {
@@ -39,8 +39,8 @@ pub struct PyProject {
     pub python_ver: String,
 }
 
-pub fn common(name: &str, create: bool) -> String {
-    let prefix: String = if create { format!("./{}", name) } else { "./".to_string() };
+pub fn common(name: &str) -> String {
+    let prefix: String = format!("./{}", name);
 
     // Create needed dirs
     let _ = fs::create_dir_all(format!("{}/.ci", prefix));
