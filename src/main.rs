@@ -13,7 +13,7 @@ fn main() {
     match cli {
         Cli::Create(args) => {
             println!("Creating project with name: {}", args.name);
-            let python_version: String = "3.9".to_string();
+            let python_version: String = "3.9".to_string(); // TODO get currently installed python version from other func
             let prefix = common(&args.name);
             python(&args.name, &prefix, &python_version);
         }
