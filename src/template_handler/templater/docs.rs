@@ -26,5 +26,8 @@ pub struct DevelopmentMD {}
 pub struct UsageREADME {}
 
 #[derive(Template)]
-#[template(path = "./README.md", escape = "none")]
-pub struct BaseREADME {}
+#[template(path = "README.md", escape = "none")]
+pub struct BaseREADME {
+    pub name: String,
+    pub python_version: String,
+}

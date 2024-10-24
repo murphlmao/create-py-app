@@ -10,8 +10,8 @@ use askama::Template;
 pub struct RequirementsTXT {}
 
 #[derive(Template)]
-#[template(path = "./python-version", escape = "none")]
-pub struct SetupPy {
+#[template(path = ".python-version", escape = "none")]
+pub struct PythonVersion {
     pub python_version: String,
 }
 
@@ -26,7 +26,6 @@ pub struct PyProjectTOML {
 #[template(path = "./src/setup.py", escape = "none")]
 pub struct SetupPy {
     pub name: String,
-    pub python_version: String,
 }
 
 #[derive(Template)]
@@ -37,9 +36,7 @@ pub struct BaseInitPy {}
 #[template(path = "./src/project/config/__init__.py", escape = "none")]
 pub struct ConfigInitPy {}
 
-#[derive(Template)]
-#[template(path = "./src/project/exception/__init__.py", escape = "none")]
-pub struct ExceptionInitPy {}
+
 
 #[derive(Template)]
 #[template(path = "./src/project/main.py", escape = "none")]
@@ -61,6 +58,7 @@ pub struct FilesystemPy {}
 #[template(path = "./src/project/metadata.py", escape = "none")]
 pub struct MetadataPy {
     pub name: String,
+    pub python_version: String,
 }
 
 #[derive(Template)]
@@ -74,6 +72,10 @@ pub struct ConfigurationPy {
 pub struct LoggerPy {
     pub name: String,
 }
+
+#[derive(Template)]
+#[template(path = "./src/project/exceptions/__init__.py", escape = "none")]
+pub struct ExceptionInitPy {}
 
 #[derive(Template)]
 #[template(path = "./src/project/exceptions/base_exceptions.py", escape = "none")]
