@@ -1,5 +1,7 @@
 # {{ name }}
 
+## Dependencies:
+{{ python_version }}
 
 ## How To Run:
 First setup your environment:

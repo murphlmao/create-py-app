@@ -1,5 +1,6 @@
 # libraries
 import os
+import sys
 import logging
 from pathlib import Path
 from logging.config import dictConfig
@@ -40,7 +41,6 @@ def setup_logging(log_path: Path = const.LOG_FILE, log_level: str = 'INFO'):
                 'console_default': {
                     'format': '%(message)s',
                 },
-
             },
             'filters': {
                 'user_filter': {
@@ -54,25 +54,26 @@ def setup_logging(log_path: Path = const.LOG_FILE, log_level: str = 'INFO'):
                     'maxBytes': 52428800,  # 50MB
                     'backupCount': 5,
                     'formatter': 'default',
-                    'encoding': 'utf8'
+                    'encoding': 'utf8',
+                    'level': log_level.upper()  # all logs go to the file
                 },
                 'console_info': {
                     'class': 'logging.StreamHandler',
                     'formatter': 'console_default',
                     'level': 'INFO',
-                    'filters': ['user_filter'], # this will only print messages with the 'user' attribute set to True
-
+                    'filters': ['user_filter'],  # only logs with extra={'user': True} go here
+                    'stream': sys.stdout,  # logs to stdout if extra={'user': True})
                 },
-                'root': {
-                    'level': log_level.upper(),
-                    'handlers': ['file', 'console_info'],
-                },
+            },
+            'root': {
+                'level': log_level.upper(),
+                'handlers': ['file', 'console_info'],
             }
         })
         logging.getLogger(__name__)
 
     except Exception as e:
-        print(f"Error setting up logging configuration.")
+        print("Error during logging setup.")
         print(e)
         raise e
 

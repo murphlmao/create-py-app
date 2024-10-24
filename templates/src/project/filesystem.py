@@ -1,7 +1,6 @@
 # libraries
 import os
 import logging
-import configparser
 from pathlib import Path
 from typing import Sequence, Union
 

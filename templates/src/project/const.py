@@ -32,10 +32,10 @@ DEV_MODE: Final[bool] = os.getenv('DEV', 'false').lower() == 'true'
 BASE_DIR = Path(WINDOWS_DEFAULT_PATH if IS_WINDOWS else LINUX_DEFAULT_PATH)
 
 if DEV_MODE: # assume production mode
-    BASE_DIR = _get_installation_location() / "_" # ./src/{{ name }} /_/
+    BASE_DIR = _get_installation_location() / "_" # ./src/{{ name }}/_/
 
 
-### {{ name }}} Constants ###
+### {{ name }} Constants ###
 APP_NAME: Final[str] = metadata.__title__
 BINARY_NAME: Final[str] = APP_NAME + ('.exe' if IS_WINDOWS else '')
 VERSION: Final[str] = metadata.__version__
@@ -58,9 +58,9 @@ LOG_FILE: Final[Path] = LOGS_DIR / LOG_FILENAME
 # misc constants
 LOG_TO_CONSOLE: Final[Dict[str, bool]] = {"user": True} # see ./config/logger.py/_UserFilter for more info
 
-### Standard directories and files to create
 
-# If these directories/files already exist, it will *not* overwrite them
+### standard directories and files to create
+# if these directories/files already exist, it will *not* overwrite them
 # nor change their configuration. They just need to exist for the application to run.
 
 STD_DIRECTORIES_TO_CREATE: List[Path] = [

@@ -6,7 +6,7 @@ import configparser
 
 # modules
 from {{ name }} import const
-from {{ name }}.import filesystem
+from {{ name }} import filesystem
 from {{ name }}.config import configuration
 
 
@@ -18,7 +18,7 @@ def main():
     )
 
     # main logic
-    config = configuration.Configuration(dev_mode=const.DEV_MODE)
+    config = configuration.Configuration()
     config_data: configparser.ConfigParser = config.read_config_file()
 
 
