@@ -12,8 +12,4 @@ regex = "1.10.2"
 opt-level = 1
 
 [profile.release]
-opt-level = 1
-
-[build]
-rustflags = ["-Z", "threads=4"]
-# rustc-wrapper = "sccache" # Use sccache for caching compilation
+opt-level = 3
