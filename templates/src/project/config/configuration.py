@@ -139,7 +139,7 @@ class Configuration:
         self.update_config_file('PROJECT', 'Version', const.VERSION)
         self.update_config_file('PROJECT', 'InstallationLocation', const.BASE_DIR)
 
-        current_log_level = self.config['OPTIONS']['LogLevel']
+        current_log_level = self.config['OPTIONS']['LOGLEVEL']
         self.update_config_file('OPTIONS', 'LoggingLevel', current_log_level.upper())
 
     def update_config_file(self, section: str, option: str, value):
