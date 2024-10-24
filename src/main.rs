@@ -1,5 +1,3 @@
-// libraries
-
 // modules
 mod cli;
 use cli::args::Cli;
