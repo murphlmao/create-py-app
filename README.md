@@ -36,6 +36,10 @@ create-py-app create --name my-new-app --python-version 3.8
 create-py-app create --name my-new-app
 ```
 
+
+# Installation
+Go to the releases tab & select the latest release. Download the installer, 'create-py-app-installer.exe', run it. The installer will add the `create-py-app` command to your PATH & install the necessary files to your system.
+
 ## Post beta:
 - [ ] Add unit tests
 - [ ] Add CI/CD for auto-builds & release cycles
