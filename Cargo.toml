@@ -12,4 +12,7 @@ regex = "1.10.2"
 opt-level = 1
 
 [profile.release]
-opt-level = 3
+# optimized for generic architecture (this will work on older CPUs too)
+codegen-units = 1  # better optimization
+lto = true  # enable link time optimization
+opt-level = "z"  # binary size > performance
