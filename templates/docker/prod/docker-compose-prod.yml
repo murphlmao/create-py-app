@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    container_name: python_app_container  # Optional: name the container
+    image: python_app_image  # Optional: name the image to tag
+    ports:
+      - "8000:8000"  # Expose a port if needed, adjust based on your app's requirements
+    volumes:
+      - .:/app  # Mount the current directory to the /app directory in the container
+    environment:
+      - PYTHONUNBUFFERED=1  # Optional: ensures logs are streamed immediately
+    command: ["python", "./main.py"]
+    restart: always  # Optional: ensures the container restarts if it crashes
+
+volumes:
+  app_data:  # Optional: define a named volume for data persistence if needed

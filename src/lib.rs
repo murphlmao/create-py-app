@@ -1,2 +1,1 @@
-pub mod commands;
-pub mod os_detection;
+// TODO: refactor main module code in here so main handles bare minimum (shell return code)

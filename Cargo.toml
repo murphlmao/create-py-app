@@ -1,10 +1,18 @@
 [package]
 name = "create-py-app"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+askama = "0.12.1"
 clap = { version = "4.5.10", features = ["derive"] }
-os_info = "3.8.2"
+regex = "1.10.2"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+# optimized for generic architecture (this will work on older CPUs too)
+codegen-units = 1  # better optimization
+lto = true  # enable link time optimization
+opt-level = "z"  # binary size > performance
