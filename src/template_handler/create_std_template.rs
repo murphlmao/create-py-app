@@ -128,6 +128,6 @@ pub fn render_all(name: &str, python_version: &str) -> String {
     let new_src_path = format!("{}/src/{}", prefix_path, name);
     std::fs::rename(src_path, new_src_path).expect("Failed to rename project directory");
 
-    let message = format!("Created project with name: {}\n", name);
+    let message = format!("Created project with name: {}", name);
     return message;
 }

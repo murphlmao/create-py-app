@@ -5,7 +5,11 @@ use clap::Parser;
 
 #[derive(Parser)]
 pub struct CreateModuleArgs { // create module subparser
+    #[arg(short, long)]
     pub name: String,
+
+    #[arg(short, long)]
+    pub python_version: Option<String>,
 }
 
 
