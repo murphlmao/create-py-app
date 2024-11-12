@@ -6,8 +6,8 @@ from pathlib import Path
 
 # modules
 from {{ name }} import const
+from {{ name }} import logger
 from {{ name }} import filesystem
-from {{ name }}.config import logger
 
 class Configuration:
     """
@@ -15,14 +15,14 @@ class Configuration:
     This class creates the backbone of the application.
     """
 
-    _instance = None
-    def __new__(cls, *args, **kwargs):
-        """Singleton pattern so only one instance of this class can be created."""
-        if not cls._instance:
-            cls._instance = super(Configuration, cls).__new__(cls)
-            cls._instance.__initialized = False
-        return cls._instance
-
+    # OPTIONAL: Singleton pattern for configuration.
+    #_instance = None
+    #def __new__(cls, *args, **kwargs):
+    #    """Singleton pattern so only one instance of this class can be created."""
+    #    if not cls._instance:
+    #        cls._instance = super(Configuration, cls).__new__(cls)
+    #        cls._instance.__initialized = False
+    #    return cls._instance
 
     def __init__(self, config_file_path: Path = const.CONFIG_FILE) -> None:
         if self.__initialized:
@@ -34,6 +34,7 @@ class Configuration:
                 'LOGLEVEL': 'INFO',
             },
 
+            # OPTIONAL: You can comment these out. This is primarily for debugging.
             "PROJECT": { # see _immutable_config_keys for why these are here
                 "Name": const.APP_NAME,
                 "Version": const.VERSION,
@@ -50,15 +51,21 @@ class Configuration:
         else:
             self.read_config_file()
 
+    def create_logger(self):
+        """Create the logger for the application."""
+        config_log_level = self.config['CLI']['LoggingLevel'].upper()
+        if config_log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+            logging.warning(f"Invalid logging level: {config_log_level}. Defaulting to INFO.")
+            self.update_config_file('CLI', 'LoggingLevel', 'INFO')
+            config_log_level = 'INFO'
+
         logger.setup_logging(
             log_path=const.LOG_FILE,
-            log_level=self.config['OPTIONS']['LOGLEVEL']
+            log_level=config_log_level
         )
 
     def create_config_file(self):
-        """
-        Create configuration file if it does not exist, or add missing sections if they are missing.
-        """
+        """Create configuration file if it does not exist, or add missing sections if they are missing."""
         logging.info(f"Creating configuration file at: {self.config_file_path}")
 
         os.makedirs(self.config_file_path.parent, exist_ok=True)
@@ -68,7 +75,9 @@ class Configuration:
 
     def _write_std_config_defaults(self) -> bool:
         """
-        Writes the default configuration into the configuration file.
+        Writes the default configuration into
+        the configuration file based on the
+        default_configuration attribute.
         """
         try:
             for section, keys in self.default_configuration.items():
@@ -86,9 +95,7 @@ class Configuration:
             return False
 
     def read_config_file(self, validate: bool=True):
-        """
-        Read the configuration file and return the configuration data.
-        """
+        """Read the configuration file & return the configuration data."""
         self.config.read(self.config_file_path)
         logging.info(f"Configuration file read from: {self.config_file_path}")
 
@@ -100,9 +107,7 @@ class Configuration:
         return self.config
 
     def validate_configuration_file(self) -> bool:
-        """
-        Validate the configuration file for required fields and types.
-        """
+        """Validate the configuration file for required keys & sections."""
         for section, keys in self.default_configuration.items():
             if section not in self.config:
                 logging.warning(f"Missing section: {section}")
