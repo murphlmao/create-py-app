@@ -2,7 +2,6 @@
 import os
 import sys
 import logging
-import configparser
 
 # modules
 from {{ name }} import const
@@ -11,15 +10,29 @@ from {{ name }}.config import configuration
 
 
 
-def main():
-    filesystem.create(
-        directories=const.STD_DIRECTORIES_TO_CREATE,
-        files=const.STD_FILES_TO_CREATE
-    )
+def main() -> int:
+    try:
+        filesystem.create(
+            directories=const.STD_DIRECTORIES_TO_CREATE,
+            files=const.STD_FILES_TO_CREATE
+        )
 
-    # main logic
-    config = configuration.Configuration()
-    config_data: configparser.ConfigParser = config.read_config_file()
+        # main logic
+        config = configuration.Configuration()
+        if not os.path.exists(config.config_file_path):
+            config.create_config_file()
+        else:
+            config.read_config_file(validate=True)
+
+        config.create_logger()
+        logging.info(f"Starting up {const.APP_NAME}, version: {const.VERSION}")
+
+        return 0
+
+    except Exception as e:
+        logging.exception(e)
+        return 1
+
 
 
 
