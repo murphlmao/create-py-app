@@ -68,7 +68,7 @@ pub struct ConfigurationPy {
 }
 
 #[derive(Template)]
-#[template(path = "./src/project/config/logger.py", escape = "none")]
+#[template(path = "./src/project/logger.py", escape = "none")]
 pub struct LoggerPy {
     pub name: String,
 }
