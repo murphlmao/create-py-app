@@ -15,3 +15,5 @@ Cargo.lock
 
 
 *.exe
+__pycache__/*
+venv/
