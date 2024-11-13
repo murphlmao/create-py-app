@@ -12,12 +12,34 @@ pub struct DirectoryManager {
 }
 
 impl DirectoryManager {
-    pub fn new(base_path: &str) -> Self {
+    pub fn new(base_path: &str, vcs_platform: &str) -> Self {
         fn prefix_paths(base: &str, paths: Vec<&str>) -> Vec<String> {
             paths.into_iter()
                 .map(|p| format!("{}/{}", base.trim_end_matches('/'), p.trim_start_matches("./")))
                 .collect()
         }
+
+        let git_dirs = if vcs_platform.to_lowercase() == "gitlab" {
+            prefix_paths(base_path, vec![
+                "./.gitlab",
+                "./.gitlab/issue_templates/",
+                "./.gitlab/merge_request_templates/",
+            ])
+        } else if vcs_platform.to_lowercase() == "github" {
+            prefix_paths(base_path, vec![
+                "./.github",
+                "./.github/ISSUE_TEMPLATE/",
+                "./.github/PULL_REQUEST_TEMPLATE/",
+                "./.github/workflows/",
+            ])
+        } else {
+            eprintln!("Unsupported VCS platform '{}'. Defaulting to GitHub structure.", vcs_platform);
+            prefix_paths(base_path, vec![
+                "./.gitlab",
+                "./.gitlab/issue_templates/",
+                "./.gitlab/merge_request_templates/",
+            ])
+        };
 
         DirectoryManager {
             scripts: prefix_paths(base_path, vec![
@@ -39,11 +61,7 @@ impl DirectoryManager {
                 "./docker/dev",
                 "./docker/prod",
             ]),
-            git: prefix_paths(base_path, vec![
-                "./.gitlab",
-                "./.gitlab/issue_templates/",
-                "./.gitlab/merge_request_templates/",
-            ]),
+            git: git_dirs,
         }
     }
 

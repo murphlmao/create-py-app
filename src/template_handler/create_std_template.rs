@@ -21,14 +21,24 @@ impl<T: Template> WritableTemplate for T {
     }
 }
 
-fn render_git(path_prefix: &str) {
+fn render_git(path_prefix: &str, vcs_platform: &str) {
     git::GitIgnore{}.write(path_prefix, ".gitignore");
     git::GitAttributes{}.write(path_prefix, ".gitattributes");
-    git::GitLabCiYML{}.write(path_prefix, ".gitlab-ci.yml");
-    git::GitLabIssueTemplateCustom{}.write(path_prefix, ".gitlab/issue_templates/custom.md");
-    git::GitLabIssueTemplateBugReport{}.write(path_prefix, ".gitlab/issue_templates/bug_report.md");
-    git::GitLabIssueTemplateFeatureRequest{}.write(path_prefix, ".gitlab/issue_templates/feature_request.md");
-    git::GitLabPRTemplateDefault{}.write(path_prefix, ".gitlab/merge_request_templates/default.md");
+
+    if vcs_platform == "github" {
+        git::GitHubIssueTemplateCustom{}.write(path_prefix, ".github/ISSUE_TEMPLATE/custom.md");
+        git::GitHubIssueTemplateBugReport{}.write(path_prefix, ".github/ISSUE_TEMPLATE/bug_report.md");
+        git::GitHubIssueTemplateFeatureRequest{}.write(path_prefix, ".github/ISSUE_TEMPLATE/feature_request.md");
+        git::GitHubPRTemplateDefault{}.write(path_prefix, ".github/PULL_REQUEST_TEMPLATE/default.md");
+        git::GitHubWorkflowsRelease{}.write(path_prefix, ".github/workflows/release.yml");
+    }
+    else {
+        git::GitLabCiYML{}.write(path_prefix, ".gitlab-ci.yml");
+        git::GitLabIssueTemplateCustom{}.write(path_prefix, ".gitlab/issue_templates/custom.md");
+        git::GitLabIssueTemplateBugReport{}.write(path_prefix, ".gitlab/issue_templates/bug_report.md");
+        git::GitLabIssueTemplateFeatureRequest{}.write(path_prefix, ".gitlab/issue_templates/feature_request.md");
+        git::GitLabPRTemplateDefault{}.write(path_prefix, ".gitlab/merge_request_templates/default.md");
+    }
 }
 
 fn render_docker(path_prefix: &str) {
@@ -114,12 +124,12 @@ fn render_python(name: &str, python_version: &str, path_prefix: &str) {
 
 }
 
-pub fn render_all(name: &str, python_version: &str) -> String {
+pub fn render_all(name: &str, python_version: &str, vcs_platform: &str) -> String {
     let prefix_path: String = format!("./{}", name);
 
     render_docker(&prefix_path);
     render_docs(name, python_version, &prefix_path);
-    render_git(&prefix_path);
+    render_git(&prefix_path, vcs_platform);
     render_python(name, python_version, &prefix_path);
     render_scripts(&prefix_path);
 

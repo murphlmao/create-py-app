@@ -51,12 +51,29 @@ async fn main() {
                 }
             };
 
-            println!("Creating project: {} with python version {}", args.name, python_version);
+            // determine Python version
+            let vcs_platform = match &args.vcs_platform {
+                Some(platform) => {
+                    if "gitlab" == platform.to_lowercase() {
+                        platform.clone()
 
-            let dirs = create_dirs::DirectoryManager::new(&name);
+                    } else if "github" == platform.to_lowercase() {
+                        platform.clone()
+
+                    } else {
+                        eprintln!("Choose from 'GitHub' or GitLab' not {}", platform);
+                        std::process::exit(1);
+                    }
+                }
+                None => "gitlab".to_string(),
+            };
+
+            println!("Creating project: {} with python version {}, using {} templates", args.name, python_version, vcs_platform);
+
+            let dirs = create_dirs::DirectoryManager::new(&name, &vcs_platform);
             dirs.create();
 
-            let res = create_std_template::render_all(name, &python_version);
+            let res = create_std_template::render_all(name, &python_version, &vcs_platform);
             println!("{}", res);
         }
     }

@@ -12,7 +12,8 @@ Usage: create-py-app.exe <COMMAND>
 Commands:
   create
     -n, --name <NAME> # REQUIRED
-    -p, --python-version <PYTHON_VERSION> # OPTIONAL
+    -p, --python-version <PYTHON_VERSION> # OPTIONAL, choose any valid Python version.
+    -v, --vcs-platform <VCS_PLATFORM> # OPTIONAL, choose from 'gitlab' or 'github'
 
   help    Print this message or the help of the given subcommand(s)
 
@@ -30,9 +31,9 @@ Currently, this version only supports running in the directory you want to creat
 Usage: create-py-app.exe create --name <NAME> --python-version <PYTHON_VERSION>
 
 # explicit
-create-py-app create --name my-new-app --python-version 3.8
+create-py-app create --name my-new-app --python-version 3.8 --vcs-platform gitlab
 
-# auto-discover python version
+# auto-discover python version, default to using gitlab as your template
 create-py-app create --name my-new-app
 ```
 
@@ -44,5 +45,4 @@ Go to the releases tab & select the latest release. Download the installer, 'cre
 ## Post beta feature-set:
 - [ ] Add unit tests
 - [ ] Add CI/CD for auto-builds & release cycles
-- [ ] Add support for GitHub template files too.
 - [ ] Add support for specifying an installation location.
