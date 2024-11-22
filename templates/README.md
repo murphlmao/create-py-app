@@ -42,3 +42,13 @@ $env:DEV = "true"
 
 Dev mode will create a `_` directory in `./src/{{ name }}/_/` that will act as the 'installation' directory of your project.
 This is useful for debugging & testing one environment without worrying about other filesystem changes.
+
+
+### Testing
+[Pytest Documentation](https://docs.pytest.org/en/stable/contents.html).
+To run tests, you can run the following command:
+```bash
+cd ./src/tests # this is your running context
+pytest
+```
+
