@@ -2,7 +2,7 @@
 
 [Setup]
 AppName=Create Py App
-AppVersion=1.0.0
+AppVersion=1.0.0-beta.2
 DefaultDirName={autopf}\CreatePyApp
 DefaultGroupName=CreatePyApp
 OutputDir=.
