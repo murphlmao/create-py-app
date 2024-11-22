@@ -23,14 +23,12 @@ _platform: str = platform.system().lower()
 IS_WINDOWS: Final[bool] = _platform == 'windows'
 IS_UNIX: Final[bool] = _platform in ('linux', 'darwin')
 
-BASE_DIR: Path = Path()
+# default directory creation path(s)
 WINDOWS_DEFAULT_PATH: Final[Path] = Path("C:/")
 LINUX_DEFAULT_PATH: Final[Path] = Path("/tmp/")
-
-
-DEV_MODE: Final[bool] = os.getenv('DEV', 'false').lower() == 'true'
 BASE_DIR = Path(WINDOWS_DEFAULT_PATH if IS_WINDOWS else LINUX_DEFAULT_PATH)
 
+DEV_MODE: Final[bool] = os.getenv('DEV', 'false').lower() == 'true'
 if DEV_MODE: # assume production mode
     BASE_DIR = __installation_location__ / "_" # ./src/{{ name }}/_/
 
