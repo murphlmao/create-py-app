@@ -78,6 +78,7 @@ fn render_python(name: &str, python_version: &str, path_prefix: &str) {
 
     // ./src/*
     python::RequirementsTXT{}.write(path_prefix, "./src/requirements.txt");
+    python::RequirementsDevTXT{}.write(path_prefix, "./src/requirements-dev.txt");
 
     python::PyProjectTOML{
         name: name.to_string(),
@@ -87,6 +88,13 @@ fn render_python(name: &str, python_version: &str, path_prefix: &str) {
     python::SetupPy{
         name: name.to_string()
     }.write(path_prefix, "./src/setup.py");
+
+    // ./src/tests/*
+    python::TestConftestPy{}.write(path_prefix, "./src/tests/conftest.py");
+
+    python::TestUnitLoggerPy{
+        name: name.to_string()
+    }.write(path_prefix, "./src/tests/unit/test_logger.py");
 
 
     // ./src/project/*
@@ -100,6 +108,9 @@ fn render_python(name: &str, python_version: &str, path_prefix: &str) {
     python::ConstPy{
         name: name.to_string()
     }.write(path_prefix, "./src/project/const.py");
+
+    python::EnumsPy{}.write(path_prefix, "./src/project/enums.py");
+
 
     python::MetadataPy{
         name: name.to_string(),
@@ -115,7 +126,7 @@ fn render_python(name: &str, python_version: &str, path_prefix: &str) {
     python::ConfigInitPy{}.write(path_prefix, "./src/project/config/__init__.py");
     python::LoggerPy{
         name: name.to_string()
-    }.write(path_prefix, "./src/project/config/logger.py");
+    }.write(path_prefix, "./src/project/logger.py");
 
 
     // ./src/project/exceptions/*

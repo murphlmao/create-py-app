@@ -10,6 +10,10 @@ use askama::Template;
 pub struct RequirementsTXT {}
 
 #[derive(Template)]
+#[template(path = "./src/requirements-dev.txt", escape = "none")]
+pub struct RequirementsDevTXT {}
+
+#[derive(Template)]
 #[template(path = ".python-version", escape = "none")]
 pub struct PythonVersion {
     pub python_version: String,
@@ -51,6 +55,10 @@ pub struct ConstPy {
 }
 
 #[derive(Template)]
+#[template(path = "./src/project/enums.py", escape = "none")]
+pub struct EnumsPy {}
+
+#[derive(Template)]
 #[template(path = "./src/project/filesystem.py", escape = "none")]
 pub struct FilesystemPy {}
 
@@ -81,3 +89,12 @@ pub struct ExceptionInitPy {}
 #[template(path = "./src/project/exceptions/base_exceptions.py", escape = "none")]
 pub struct BaseExceptionsPy {}
 
+#[derive(Template)]
+#[template(path = "./src/tests/conftest.py", escape = "none")]
+pub struct TestConftestPy {}
+
+#[derive(Template)]
+#[template(path = "./src/tests/unit/test_logger.py", escape = "none")]
+pub struct TestUnitLoggerPy {
+    pub name: String,
+}

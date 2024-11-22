@@ -6,11 +6,15 @@ import logging
 # modules
 from {{ name }} import const
 from {{ name }} import filesystem
+from {{ name }}.enums import ExitCode
 from {{ name }}.config import configuration
+from {{ name }}.logger import console_logger
 
 
 
 def main() -> int:
+    return_code: int = ExitCode.EX_ERROR.value  # default to a general error code (unbound safety)
+
     try:
         filesystem.create(
             directories=const.STD_DIRECTORIES_TO_CREATE,
@@ -26,13 +30,20 @@ def main() -> int:
 
         config.create_logger()
         logging.info(f"Starting up {const.APP_NAME}, version: {const.VERSION}")
-
-        return 0
+        console_logger.info("This is an example of a log message that goes to the console as well as the log file")
+        return_code: int = ExitCode.EX_OK.value
 
     except Exception as e:
         logging.exception(e)
-        return 1
+        return_code: int = ExitCode.EX_ERROR.value
 
+
+    if not (0 <= return_code <= 255):
+        logging.error(f"Invalid return code {return_code}, defaulting to 255")
+        return_code: int = ExitCode.EX_RANGE.value
+
+    logging.debug(f"Exiting with code {return_code}")
+    return return_code
 
 
 

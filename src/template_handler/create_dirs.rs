@@ -56,6 +56,8 @@ impl DirectoryManager {
                 "./src/project",
                 "./src/project/config",
                 "./src/project/exceptions",
+                "./src/tests",
+                "./src/tests/unit",
             ]),
             docker: prefix_paths(base_path, vec![
                 "./docker/dev",
