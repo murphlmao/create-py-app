@@ -41,11 +41,6 @@ def setup_logging(log_path: Path = const.LOG_FILE, log_level: str = 'INFO'):
                     'encoding': 'utf8',
                     'level': log_level.upper(),
                 },
-                'console_info': {
-                    'class': 'logging.StreamHandler',
-                    'formatter': 'console_default',
-                    'level': 'INFO',
-                },
                 # handler for user_logger that always prints to the terminal
                 'user_console': {
                     'class': 'logging.StreamHandler',
@@ -56,11 +51,11 @@ def setup_logging(log_path: Path = const.LOG_FILE, log_level: str = 'INFO'):
             },
             'root': {
                 'level': log_level.upper(),
-                'handlers': ['file', 'console_info'],
+                'handlers': ['file'],
             },
             'loggers': {
                 # independent logger, not dependent on root
-                'user_logger': {
+                'console_logger': {
                     'level': 'INFO',
                     'handlers': ['user_console', 'file'],
                     'propagate': False,  # ensure it doesn't propagate to root
@@ -76,7 +71,7 @@ def setup_logging(log_path: Path = const.LOG_FILE, log_level: str = 'INFO'):
 
 # always executed on import
 logging.getLogger(__name__)
-user_logger: Logger = logging.getLogger('user_logger')
+console_logger: Logger = logging.getLogger('console_logger')
 
 
 if __name__ == '__main__':
