@@ -3,30 +3,18 @@ import os
 import sys
 import logging
 from pathlib import Path
+from logging import Logger
 from logging.config import dictConfig
 
 # modules
 from {{ name }} import const
 
 
-class _UserFilter(logging.Filter):
-    """
-    This class is for filtering log records that are user-facing.
-    This is to reduce the issue of:
-
-        logging.info("This is a message I want the user to see.")
-        print("This is a message I want the user to see.")
-
-    Where, in this case, a variable would just be wasteful.
-
-    Instead, you can pass in: extra={'user': True} to the logger.info() call
-    to return the message to the user in their terminal. This makes these calls
-    much more reusable and less redundant.
-    """
-    def filter(self, record):
-        return getattr(record, 'user', False)
-
 def setup_logging(log_path: Path = const.LOG_FILE, log_level: str = 'INFO'):
+    if log_level.upper() not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+        logging.warning(f"Invalid logging level: {log_level}. Defaulting to INFO. Please check your configuration file.")
+        log_level = 'INFO'
+
     if not os.path.exists(log_path.parent):
         os.makedirs(log_path.parent, exist_ok=True)
 
@@ -42,11 +30,7 @@ def setup_logging(log_path: Path = const.LOG_FILE, log_level: str = 'INFO'):
                     'format': '%(message)s',
                 },
             },
-            'filters': {
-                'user_filter': {
-                    '()': _UserFilter,
-                }
-            },
+
             'handlers': {
                 'file': {
                     'class': 'logging.handlers.RotatingFileHandler',
@@ -55,27 +39,40 @@ def setup_logging(log_path: Path = const.LOG_FILE, log_level: str = 'INFO'):
                     'backupCount': 5,
                     'formatter': 'default',
                     'encoding': 'utf8',
-                    'level': log_level.upper()  # all logs go to the file
+                    'level': log_level.upper(),
                 },
-                'console_info': {
+                # handler for user_logger that always prints to the terminal
+                'user_console': {
                     'class': 'logging.StreamHandler',
                     'formatter': 'console_default',
                     'level': 'INFO',
-                    'filters': ['user_filter'],  # only logs with extra={'user': True} go here
-                    'stream': sys.stdout,  # logs to stdout if extra={'user': True})
+                    'stream': sys.stdout,
                 },
             },
             'root': {
                 'level': log_level.upper(),
-                'handlers': ['file', 'console_info'],
+                'handlers': ['file'],
+            },
+            'loggers': {
+                # independent logger, not dependent on root
+                'console_logger': {
+                    'level': 'INFO',
+                    'handlers': ['user_console', 'file'],
+                    'propagate': False,  # ensure it doesn't propagate to root
+                }
             }
         })
-        logging.getLogger(__name__)
+
 
     except Exception as e:
-        print("Error during logging setup.")
+        print("Error Creating Logs Path")
         print(e)
         raise e
+
+# always executed on import
+logging.getLogger(__name__)
+console_logger: Logger = logging.getLogger('console_logger')
+
 
 if __name__ == '__main__':
     pass
