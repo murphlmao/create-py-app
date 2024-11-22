@@ -25,9 +25,9 @@ class Configuration:
     #    return cls._instance
 
     def __init__(self, config_file_path: Path = const.CONFIG_FILE) -> None:
-        if self.__initialized:
-            return
-        self.__initialized = True
+        #if self.__initialized:
+        #    return
+        #self.__initialized = True
 
         self.default_configuration = {
             'OPTIONS': {
@@ -53,10 +53,10 @@ class Configuration:
 
     def create_logger(self):
         """Create the logger for the application."""
-        config_log_level = self.config['CLI']['LoggingLevel'].upper()
+        config_log_level = self.config['OPTIONS']['LOGLEVEL'].upper()
         if config_log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
             logging.warning(f"Invalid logging level: {config_log_level}. Defaulting to INFO.")
-            self.update_config_file('CLI', 'LoggingLevel', 'INFO')
+            self.update_config_file('OPTIONS', 'LOGLEVEL', 'INFO')
             config_log_level = 'INFO'
 
         logger.setup_logging(
