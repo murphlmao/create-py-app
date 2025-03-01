@@ -3,3 +3,4 @@ pub mod docs;
 pub mod git;
 pub mod python;
 pub mod scripts;
+pub mod retype;

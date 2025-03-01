@@ -73,7 +73,7 @@ async fn main() {
             let dirs = create_dirs::DirectoryManager::new(&name, &vcs_platform);
             dirs.create();
 
-            let res = create_std_template::render_all(name, &python_version, &vcs_platform);
+            let res = create_std_template::render_all(name, &python_version, &vcs_platform, args.retype);
             println!("{}", res);
         }
     }

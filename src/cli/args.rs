@@ -13,6 +13,9 @@ pub struct CreateModuleArgs { // create module subparser
 
     #[arg(short, long)]
     pub vcs_platform: Option<String>,
+
+    #[arg(short, long)]
+    pub retype: bool,
 }
 
 

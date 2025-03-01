@@ -69,6 +69,10 @@ fn render_scripts(path_prefix: &str) {
     scripts::WindowsSetupScript{}.write(path_prefix, "./scripts/dev/setup.ps1");
 }
 
+fn render_retype(path_prefix: &str) {
+    retype::RetypeConfig{}.write(path_prefix, "./retype.yml");
+}
+
 fn render_python(name: &str, python_version: &str, path_prefix: &str) {
     // ./*
     python::PythonVersion{
@@ -135,7 +139,7 @@ fn render_python(name: &str, python_version: &str, path_prefix: &str) {
 
 }
 
-pub fn render_all(name: &str, python_version: &str, vcs_platform: &str) -> String {
+pub fn render_all(name: &str, python_version: &str, vcs_platform: &str, retype: bool) -> String {
     let prefix_path: String = format!("./{}", name);
 
     render_docker(&prefix_path);
@@ -143,6 +147,7 @@ pub fn render_all(name: &str, python_version: &str, vcs_platform: &str) -> Strin
     render_git(&prefix_path, vcs_platform);
     render_python(name, python_version, &prefix_path);
     render_scripts(&prefix_path);
+    if retype { render_retype(&prefix_path); }
 
     // rename ./src/project to ./src/{name}
     let src_path = format!("{}/src/project", prefix_path);
