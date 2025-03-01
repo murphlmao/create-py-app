@@ -14,6 +14,7 @@ Commands:
     -n, --name <NAME> # REQUIRED
     -p, --python-version <PYTHON_VERSION> # OPTIONAL, choose any valid Python version.
     -v, --vcs-platform <VCS_PLATFORM> # OPTIONAL, choose from 'gitlab' or 'github'
+    -r, --retype # OPTIONAL, creates default Retype config file
 
   help    Print this message or the help of the given subcommand(s)
 
