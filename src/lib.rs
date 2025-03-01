@@ -57,8 +57,18 @@ pub fn resolve_vcs_platform(specified_platform: Option<String>) -> String {
             if normalized == "gitlab" || normalized == "github" {
                 normalized
             } else {
-                eprintln!("Choose from 'GitHub' or GitLab' not {}", platform);
-                exit(1);
+                let error_msg = format!("Choose from 'GitHub' or GitLab' not {}", platform);
+                
+                #[cfg(test)]
+                {
+                    panic!("{}", error_msg);
+                }
+                
+                #[cfg(not(test))]
+                {
+                    eprintln!("{}", error_msg);
+                    exit(1);
+                }
             }
         },
         None => DEFAULT_VCS_PLATFORM.to_string()
@@ -84,4 +94,48 @@ pub async fn create_project(args: &CreateModuleArgs) -> () {
     
     let res = create_std_template::render_all(name, &python_version, &vcs_platform, args.retype);
     println!("{}", res);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+    
+    #[test]
+    fn test_validate_project_name_nonexistent() {
+        let test_name = "test_project_that_does_not_exist";
+        assert!(validate_project_name(test_name));
+    }
+
+    #[test]
+    fn test_validate_project_name_existing() {
+        let test_name = "test_project_that_exists";
+        fs::create_dir(test_name).unwrap();
+        assert!(!validate_project_name(test_name));
+        fs::remove_dir(test_name).unwrap();
+    }
+
+    #[test]
+    fn test_resolve_vcs_platform_default() {
+        let result = resolve_vcs_platform(None);
+        assert_eq!(result, "gitlab");
+    }
+
+    #[test]
+    fn test_resolve_vcs_platform_github() {
+        let result = resolve_vcs_platform(Some("GitHub".to_string()));
+        assert_eq!(result, "github");
+    }
+
+    #[test]
+    fn test_resolve_vcs_platform_gitlab() {
+        let result = resolve_vcs_platform(Some("GitLab".to_string()));
+        assert_eq!(result, "gitlab");
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_resolve_vcs_platform_invalid() {
+        resolve_vcs_platform(Some("Bitbucket".to_string()));
+    }
 }
