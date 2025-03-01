@@ -30,7 +30,7 @@ pub struct GitLabIssueTemplateBugReport {}
 pub struct GitLabIssueTemplateFeatureRequest {}
 
 #[derive(Template)]
-#[template(path = ".gitlab/merge_request_templates/default.md", escape = "none")]
+#[template(path = ".gitlab/merge_request_templates/Default.md", escape = "none")]
 pub struct GitLabPRTemplateDefault {}
 
 
