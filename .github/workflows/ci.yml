@@ -25,45 +25,37 @@ jobs:
       - name: Run Tests
         run: cargo test --all
 
-  tag-and-release:
-    name: Tag & Release
+  build:
+    name: Build Artifacts
     needs: test
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set Git Identity
-        run: |
-          git config --local user.email "github-actions@github.com"
-          git config --local user.name "GitHub Actions"
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Dependencies
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
 
       - name: Extract Version from Cargo.toml
         id: version
         run: echo "VERSION=$(grep -m1 '^version' Cargo.toml | sed 's/version = \"\(.*\)\"/\1/')" >> $GITHUB_ENV
 
-      - name: Create Git Tag
-        run: |
-          git tag -a v${{ env.VERSION }} -m "Release v${{ env.VERSION }}"
-          git push origin v${{ env.VERSION }}
+      - name: Build for Linux
+        run: cargo build --release
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: softprops/action-gh-release@v2
+      - name: Store Linux Artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: v${{ env.VERSION }}
-          name: Release v${{ env.VERSION }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          name: create-py-app-linux
+          path: target/release/create-py-app
 
   build-windows:
     name: Build for Windows
+    needs: test
     runs-on: windows-latest
-    needs: tag-and-release
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -80,35 +72,53 @@ jobs:
       - name: Package Windows Installer
         run: iscc .\scripts\ci\installer.iss
 
-      - name: Upload Windows Installer
-        uses: softprops/action-gh-release@v2
+      - name: Store Windows Artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: v${{ env.VERSION }}
-          files: CreatePyAppInstaller.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: CreatePyAppInstaller.exe
+          path: CreatePyAppInstaller.exe
 
-  build-linux:
-    name: Build for Linux
+  release:
+    name: Create Release
+    needs: [build, build-windows]
     runs-on: ubuntu-latest
-    needs: tag-and-release
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
+      - name: Set Git Identity
+        run: |
+          git config --local user.email "github-actions@github.com"
+          git config --local user.name "GitHub Actions"
 
-      - name: Install Dependencies
-        run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - name: Extract Version from Cargo.toml
+        id: version
+        run: echo "VERSION=$(grep -m1 '^version' Cargo.toml | sed 's/version = \"\(.*\)\"/\1/')" >> $GITHUB_ENV
 
-      - name: Build Linux Executable
-        run: cargo build --release
+      - name: Download Linux Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: create-py-app-linux
+          path: artifacts/
 
-      - name: Upload Linux Binary
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: CreatePyAppInstaller.exe
+          path: artifacts/
+
+      - name: Create Git Tag
+        run: |
+          git tag -a v${{ env.VERSION }} -m "Release v${{ env.VERSION }}"
+          git push origin v${{ env.VERSION }}
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.VERSION }}
-          files: target/release/create-py-app
+          name: Release v${{ env.VERSION }}
+          draft: false
+          prerelease: false
+          files: artifacts/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
