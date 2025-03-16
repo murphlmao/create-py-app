@@ -86,3 +86,46 @@ impl DirectoryManager {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+    use std::path::Path;
+    
+    #[test]
+    fn test_directory_structure_github() {
+        let test_dir = "test_dir_github";
+        
+        let dir_manager = DirectoryManager::new(test_dir, "github");
+        
+        dir_manager.create();
+        
+        assert!(Path::new(&format!("{}/scripts/cd", test_dir)).exists());
+        assert!(Path::new(&format!("{}/docs/Usage", test_dir)).exists());
+        assert!(Path::new(&format!("{}/src/project", test_dir)).exists());
+        assert!(Path::new(&format!("{}/docker/dev", test_dir)).exists());
+        assert!(Path::new(&format!("{}/docker/prod", test_dir)).exists());
+        assert!(Path::new(&format!("{}/.github/workflows", test_dir)).exists());
+        
+        fs::remove_dir_all(test_dir).unwrap();
+    }
+    
+    #[test]
+    fn test_directory_structure_gitlab() {
+        let test_dir = "test_dir_gitlab";
+        
+        let dir_manager = DirectoryManager::new(test_dir, "gitlab");
+        
+        dir_manager.create();
+        
+        assert!(Path::new(&format!("{}/scripts/cd", test_dir)).exists());
+        assert!(Path::new(&format!("{}/docs/Usage", test_dir)).exists());
+        assert!(Path::new(&format!("{}/src/project", test_dir)).exists());
+        assert!(Path::new(&format!("{}/docker/dev", test_dir)).exists());
+        assert!(Path::new(&format!("{}/docker/prod", test_dir)).exists());
+        assert!(Path::new(&format!("{}/.gitlab/issue_templates", test_dir)).exists());
+        
+        fs::remove_dir_all(test_dir).unwrap();
+    }
+}
